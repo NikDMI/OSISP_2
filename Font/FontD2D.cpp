@@ -13,7 +13,10 @@ namespace LAB2 {
 	}
 
 	FontD2D::FontD2D(const std::wstring& fontFamily,IDWriteFontCollection* fontCollection, DWRITE_FONT_WEIGHT weight,
-		DWRITE_FONT_STYLE fontStyle, DWRITE_FONT_STRETCH fontStretch, FLOAT fontSize, const std::wstring& localName) {
+		DWRITE_FONT_STYLE fontStyle, DWRITE_FONT_STRETCH fontStretch, FLOAT fontSize, const std::wstring& localName):
+		m_fontFamily{ fontFamily }, m_fontCollection{ fontCollection }, m_fontWeight{weight},
+		m_fontStyle{ fontStyle }, m_fontStretch{ fontStretch }, m_fontSize{ fontSize }, m_fontLocalName{localName}
+	{
 
 		if (!_isDWriteFactoryCreate) {
 			HRESULT hRes = DWriteCreateFactory(
@@ -23,13 +26,17 @@ namespace LAB2 {
 			);
 			_isDWriteFactoryCreate = true;
 		}
-		HRESULT hRes = _pWriteFactory->CreateTextFormat(fontFamily.c_str(), fontCollection, weight, fontStyle, fontStretch,
-			fontSize, localName.c_str(), m_textFormat.GetAddressOf());
+		CreateNewTextFormat();
+	}
+
+	void FontD2D::CreateNewTextFormat() {
+		HRESULT hRes = _pWriteFactory->CreateTextFormat(m_fontFamily.c_str(), m_fontCollection, m_fontWeight, m_fontStyle,
+			m_fontStretch, m_fontSize, m_fontLocalName.c_str(), m_textFormat.GetAddressOf());
 		if (hRes != S_OK) {
 			DWORD errCode = GetLastError();
 			throw CreateFontException{};
-
 		}
+		m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK); //Breaks big words
 	}
 
 
@@ -39,7 +46,8 @@ namespace LAB2 {
 
 
 	void FontD2D::SetSizeInPixels(int sizeInPixels) {
-
+		m_fontSize = sizeInPixels;
+		m_changedFontStates |= StateFontFlags::fontSize;
 	}
 
 
@@ -47,37 +55,42 @@ namespace LAB2 {
 
 	}
 
-	void FontD2D::SetMaxTextWidth(FLOAT w) {
-		IFont::SetMaxTextWidth(w);
-		//m_changedFontStates |= StateFontFlags::textRectangle;
-	}
-
-
-	void FontD2D::SetMaxTextHeight(FLOAT h) {
-		IFont::SetMaxTextHeight(h);
-		//m_changedFontStates |= StateFontFlags::textRectangle;
-	}
-
-	/*
 	void FontD2D::ChangeFontState() {
 		if (m_changedFontStates) {
-
-			if (m_changedFontStates & StateFontFlags::textRectangle) {
-				m_textLayout->SetMaxHeight(m_maxTextHeight);
-				m_textLayout->SetMaxWidth(m_maxTextWidth);//ѕока без проверки на отрицательные значени€
+			bool isCriticalChanges = false; //This flag shows, do we need to create new textFormat object
+			if (m_changedFontStates & StateFontFlags::fontSize) {
+				isCriticalChanges = true;
 			}
+			if (isCriticalChanges) CreateNewTextFormat();
 			m_changedFontStates = 0;
 		}
 	}
-	*/
 
-	ComPtr<IDWriteTextLayout> FontD2D::GetFormattedTextLayout(const std::wstring text) {
+	
+
+	ComPtr<IDWriteTextLayout> FontD2D::GetFormattedTextLayout(const std::wstring text, D2D_RECT_F textRect) {
+		ChangeFontState(); //Create new textFormat object if user make some changes
 		ComPtr<IDWriteTextLayout> textLayout;
+		FLOAT maxWidth = textRect.right - textRect.left;
+		FLOAT maxHeight = textRect.bottom - textRect.top;
 		HRESULT hRes = _pWriteFactory->CreateTextLayout(text.c_str(), text.size(), m_textFormat.Get(),
-			m_maxTextWidth, m_maxTextHeight, textLayout.GetAddressOf());
+			maxWidth, maxHeight, textLayout.GetAddressOf());
 		if (hRes != S_OK)
 			throw CreateFontException{};
+		
 		return textLayout;
+	}
+
+	FLOAT FontD2D::GetTextMaxHeight(const std::wstring& text, FLOAT maxWidth) {
+		ChangeFontState(); //Create new textFormat object if user make some changes
+		ComPtr<IDWriteTextLayout> textLayout;
+		HRESULT hRes = _pWriteFactory->CreateTextLayout(text.c_str(), text.size(), m_textFormat.Get(),
+			maxWidth, 0, textLayout.GetAddressOf());
+		if (hRes != S_OK)
+			throw CreateFontException{};
+		DWRITE_TEXT_METRICS textMetrix;
+		textLayout->GetMetrics(&textMetrix);
+		return textMetrix.height;
 	}
 
 }

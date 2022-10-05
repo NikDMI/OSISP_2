@@ -124,7 +124,11 @@ namespace LAB2 {
 	}
 
 	IFont* PainterD2D::CreateIFontObject() {
-		return new FontD2D{ L"Consolas", 34 };
+		return new FontD2D{ L"Consolas", 24 };
+	}
+
+	IFont* PainterD2D::GetCurrentFontObject() {
+		return m_currentFont;
 	}
 
 	void PainterD2D::SetFontObject(IFont* font) {
@@ -137,10 +141,13 @@ namespace LAB2 {
 		}
 	}
 
-	void PainterD2D::DrawTextLayout(const std::wstring& text, RECT layoutRect) {
+	void PainterD2D::DrawTextLayout(const std::wstring& text, RECT layoutRect, INT xTextOffset, INT yTextOffset) {
 		if (m_currentFont != nullptr) {
-			m_renderTarget->DrawTextLayout({ (float)layoutRect.left, (float)layoutRect.top }, m_currentFont->GetFormattedTextLayout(text).Get(),
-				m_textBrushDefault.Get());
+			D2D_RECT_F layoutRectF{ layoutRect.left, layoutRect.top, layoutRect.right, layoutRect.bottom };
+			m_renderTarget->DrawTextLayout(
+				{ (float)layoutRect.left+xTextOffset, (float)layoutRect.top+yTextOffset },
+				m_currentFont->GetFormattedTextLayout(text, layoutRectF).Get(),
+				m_textBrushDefault.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP);
 		}
 	}
 

@@ -25,6 +25,12 @@
     <Filter Include="Файлы заголовков\Font">
       <UniqueIdentifier>{dd276add-7522-4ffd-a1f7-ac60233efb8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\Table">
+      <UniqueIdentifier>{5cfce21a-9493-4a9e-97af-ccb4ddce15c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Table">
+      <UniqueIdentifier>{f73a6d54-ac0a-42d2-81c6-18615db58933}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OSISP_2.cpp">
@@ -35,6 +41,9 @@
     </ClCompile>
     <ClCompile Include="Painter\PainterD2D.cpp">
       <Filter>Исходные файлы\Painter</Filter>
+    </ClCompile>
+    <ClCompile Include="Table\Table.cpp">
+      <Filter>Исходные файлы\Table</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="Painter\PainterD2D.h">
       <Filter>Файлы заголовков\Painter</Filter>
+    </ClInclude>
+    <ClInclude Include="Table\Table.h">
+      <Filter>Файлы заголовков\Table</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

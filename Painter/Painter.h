@@ -30,9 +30,11 @@ namespace LAB2 {
 		virtual void SetDefaultTextColor(COLOR color) = 0;
 		virtual void SetFontObject(IFont* font) = 0;
 
+		virtual IFont* GetCurrentFontObject() = 0;
+
 		virtual void Rectangle(RECT rect) = 0;
 		virtual void DrawImage(BITMAP_HANDLE bmpIndex, RECT distRect) = 0;
-		virtual void DrawTextLayout(const std::wstring& text, RECT layoutRect) = 0;
+		virtual void DrawTextLayout(const std::wstring& text, RECT layoutRect, INT xTextOffset = 0, INT yTextOffset = 0) = 0;
 		virtual void InvalidateDrawArea() = 0;
 	};
 

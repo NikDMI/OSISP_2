@@ -15,13 +15,13 @@ namespace LAB2 {
 		static ComPtr<IDWriteFactory> _pWriteFactory;
 
 		ComPtr<IDWriteTextFormat> m_textFormat; //Represent default text format
-		//ComPtr<IDWriteTextLayout> m_textLayout; //Represent last used text layout
 
 		//Describes font stated, that can be changed
-		//enum StateFontFlags:int64_t {textRectangle = 0x1};
-		//int64_t m_changedFontStates = ~(int64_t)0; //Show, that state of the text layout was chanded (add new config params)
-		
-		//ComPtr<IDWriteTextLayout> m_textLayout; //This object is used for formatted texts
+		enum StateFontFlags:int64_t {fontSize = 0x1};
+		int64_t m_changedFontStates = ~(int64_t)0; //Show, that state of the text layout was chanded (add new config params)
+
+		void ChangeFontState();
+		void CreateNewTextFormat();
 		
 	public:
 		FontD2D(const std::wstring& fontFamily, IDWriteFontCollection* fontCollection, DWRITE_FONT_WEIGHT weight, DWRITE_FONT_STYLE fontStyle, DWRITE_FONT_STRETCH fontStretch,
@@ -32,10 +32,22 @@ namespace LAB2 {
 		void SetSizeInPixels(int sizeInPixels) override;
 		void SetFamily(std::wstring familyName) override;
 
-		void SetMaxTextWidth(FLOAT w) override;
-		void SetMaxTextHeight(FLOAT h) override;
+		FLOAT GetTextMaxHeight(const std::wstring& text, FLOAT maxWidth) override;
 
-		ComPtr<IDWriteTextLayout> GetFormattedTextLayout(const std::wstring text);
+		//void SetMaxTextWidth(FLOAT w) override;
+		//void SetMaxTextHeight(FLOAT h) override;
+
+		//This function is called every time, when user want to draw text layout
+		ComPtr<IDWriteTextLayout> GetFormattedTextLayout(const std::wstring text, D2D_RECT_F textRect);
+
+	private:
+		std::wstring m_fontFamily;
+		std::wstring m_fontLocalName;
+		IDWriteFontCollection* m_fontCollection;
+		DWRITE_FONT_WEIGHT m_fontWeight;
+		DWRITE_FONT_STYLE m_fontStyle;
+		DWRITE_FONT_STRETCH m_fontStretch;
+		FLOAT m_fontSize; //In pixels
 	};
 
 }

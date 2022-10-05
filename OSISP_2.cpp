@@ -2,6 +2,7 @@
 #include <string>
 #include "Font/FontD2D.h"
 #include "Painter/PainterD2D.h"
+#include "Table/Table.h"
 
 //using namespace LAB2;
 
@@ -42,11 +43,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lCmdLine, int nCmdShow)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	static Painter* painter;
 	static LAB2::IFont* defaultFont;
+	static Table* table;
+	FLOAT h;
 	switch (uMsg) {
 
 	case WM_CREATE:
 		painter = new PainterD2D{hWnd};
 		defaultFont = painter->CreateIFontObject();
+		table = new Table{ painter };
+		table->SetText(0, 0, L"Hello");
+		table->SetText(0, 1, L"Hello2");
+		table->SetText(1, 1, L"HI2");
 		break;
 
 	case WM_SIZE:
@@ -55,8 +62,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	case WM_PAINT:
 		painter->StartDraw();
+		defaultFont->SetSizeInPixels(70);
+		//h = defaultFont->GetTextMaxHeight(L"Hellosfh a b c d e f h t r w y u iddddddddddddddddddddddddddd", 100);
 		painter->SetFontObject(defaultFont);
-		painter->DrawTextLayout(L"Hello", { 0,0,100,100 });
+		//painter->DrawTextLayout(L"Hellosfh a b c d e f h t r w y u iddddddddddddddddddddddddddd", { 0,0,100,(LONG)h },100,100);
+		table->ShowHorizontalLinearTable(500, 200, 0);
 		painter->EndDraw();
 		break;
 

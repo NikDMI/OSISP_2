@@ -29,10 +29,12 @@ namespace LAB2 {
 		void SetDefaultTextColor(COLOR color) override;
 		void SetFontObject(IFont* font) override;
 
+		IFont* GetCurrentFontObject() override;
+
 		//Draw methods
 		void Rectangle(RECT rect) override;
 		void DrawImage(BITMAP_HANDLE bmpIndex, RECT distRect) override;
-		void DrawTextLayout(const std::wstring& text, RECT layoutRect) override;
+		void DrawTextLayout(const std::wstring& text, RECT layoutRect, INT xTextOffset = 0, INT yTextOffset = 0) override;
 
 		//Load resource methods
 		BITMAP_HANDLE LoadImageFromFile(std::wstring fileName) override;
