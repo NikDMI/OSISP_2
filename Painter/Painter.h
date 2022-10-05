@@ -4,6 +4,7 @@
 #include <d2d1.h>
 #include <map>
 #include <string>
+#include "../Font/IFont.h"
 
 namespace LAB2 {
 
@@ -23,33 +24,21 @@ namespace LAB2 {
 		virtual void Resize(uint32_t width, uint32_t height) = 0;
 
 		virtual BITMAP_HANDLE LoadImageFromFile(std::wstring fileName) = 0;
+		virtual IFont* CreateIFontObject() = 0;
 
 		virtual void SetBrushColor(COLOR color) = 0;
+		virtual void SetDefaultTextColor(COLOR color) = 0;
+		virtual void SetFontObject(IFont* font) = 0;
+
 		virtual void Rectangle(RECT rect) = 0;
-		virtual void DrawImage(BITMAP_HANDLE bmpIndex,RECT distRect) = 0;
+		virtual void DrawImage(BITMAP_HANDLE bmpIndex, RECT distRect) = 0;
+		virtual void DrawTextLayout(const std::wstring& text, RECT layoutRect) = 0;
 		virtual void InvalidateDrawArea() = 0;
 	};
 
 
-	class PainterD2D1 final: public Painter  {
-	private:
-		HWND m_hWnd;
-		ComPtr<ID2D1HwndRenderTarget> m_renderTarget;
-
-		static BITMAP_HANDLE max_free_handle;
-		static std::map<BITMAP_HANDLE, ComPtr<ID2D1Bitmap>> loadedImages;
-
-		ComPtr<ID2D1SolidColorBrush> m_brush;
-		D2D1_COLOR_F m_windowColor;
+	class BadArgumentsPainterException : public Exception {
 	public:
-		PainterD2D1(HWND hWnd);
-		void StartDraw() override;
-		void EndDraw() override;
-		void SetBrushColor(COLOR color) override;
-		void Rectangle(RECT rect) override;
-		void Resize(uint32_t width, uint32_t height) override;
-		BITMAP_HANDLE LoadImageFromFile(std::wstring fileName) override;
-		void DrawImage(BITMAP_HANDLE bmpIndex, RECT distRect) override;
-		void InvalidateDrawArea() override;
+		BadArgumentsPainterException() :Exception(L"Painter method get bad args") {}
 	};
 }

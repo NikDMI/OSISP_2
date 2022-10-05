@@ -139,12 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Font\FontD2D.cpp" />
     <ClCompile Include="OSISP_2.cpp" />
-    <ClCompile Include="Painter\Painter.cpp" />
+    <ClCompile Include="Painter\PainterD2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Font\FontD2D.h" />
+    <ClInclude Include="Font\IFont.h" />
     <ClInclude Include="Painter\Painter.h" />
+    <ClInclude Include="Painter\PainterD2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

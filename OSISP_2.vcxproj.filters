@@ -19,12 +19,21 @@
     <Filter Include="Исходные файлы\Painter">
       <UniqueIdentifier>{3a623fe8-e35c-41a2-a14b-b4e44de92a49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Font">
+      <UniqueIdentifier>{227adc37-8cd5-45ad-a7aa-3fd25a0ac3d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Font">
+      <UniqueIdentifier>{dd276add-7522-4ffd-a1f7-ac60233efb8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OSISP_2.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Painter\Painter.cpp">
+    <ClCompile Include="Font\FontD2D.cpp">
+      <Filter>Исходные файлы\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Painter\PainterD2D.cpp">
       <Filter>Исходные файлы\Painter</Filter>
     </ClCompile>
   </ItemGroup>
@@ -34,6 +43,15 @@
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Font\IFont.h">
+      <Filter>Файлы заголовков\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="Font\FontD2D.h">
+      <Filter>Файлы заголовков\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="Painter\PainterD2D.h">
+      <Filter>Файлы заголовков\Painter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
