@@ -3,6 +3,8 @@
 #include "Font/FontD2D.h"
 #include "Painter/PainterD2D.h"
 #include "Table/Table.h"
+#include "resource.h"
+#include <commdlg.h>
 
 //using namespace LAB2;
 
@@ -29,6 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lCmdLine, int nCmdShow)
 	wc.cbWndExtra = 0;
 	RegisterClassEx(&wc);
 	HWND hWnd = CreateWindow(CLASS_NAME.c_str(), L"OSISP_2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, 0);
+	SetMenu(hWnd, (HMENU)LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MAINMENU)));
 	ShowWindow(hWnd, SW_SHOW);
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0)) {
@@ -45,15 +48,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	static LAB2::IFont* defaultFont;
 	static Table* table;
 	FLOAT h;
+	RECT clientRect;
+	static CHOOSEFONT chooseFont;
+	static LOGFONT logFont;
 	switch (uMsg) {
 
 	case WM_CREATE:
 		painter = new PainterD2D{hWnd};
 		defaultFont = painter->CreateIFontObject();
+		defaultFont->SetSizeInPixels(30);
 		table = new Table{ painter };
 		table->SetText(0, 0, L"Hello");
 		table->SetText(0, 1, L"Hello2");
 		table->SetText(1, 1, L"HI2");
+		table->SetText(2, 2, L"HI2HH");
+		table->SetText(3, 2, L"No no no no no no");
+		table->SetText(3, 10, L"Nikita hello, how are you&");
 		break;
 
 	case WM_SIZE:
@@ -61,16 +71,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		break;
 
 	case WM_PAINT:
+		GetClientRect(hWnd, &clientRect);
 		painter->StartDraw();
-		defaultFont->SetSizeInPixels(70);
-		//h = defaultFont->GetTextMaxHeight(L"Hellosfh a b c d e f h t r w y u iddddddddddddddddddddddddddd", 100);
 		painter->SetFontObject(defaultFont);
-		//painter->DrawTextLayout(L"Hellosfh a b c d e f h t r w y u iddddddddddddddddddddddddddd", { 0,0,100,(LONG)h },100,100);
-		table->ShowHorizontalLinearTable(500, 200, 0);
+		table->ShowHorizontalLinearTable({ 10,30,(FLOAT)clientRect.right - 30, (FLOAT)clientRect.bottom - 30 }, 45, 25);
 		painter->EndDraw();
 		break;
 
 	case WM_ERASEBKGND:
+		break;
+
+	case WM_COMMAND://Menu events
+		switch (LOWORD(wParam)) {//Switch by ID
+
+		case ID_MENU_SET_FONT:
+			chooseFont.lStructSize = sizeof(chooseFont);
+			chooseFont.hwndOwner = hWnd;
+			chooseFont.lpLogFont = &logFont;
+			chooseFont.Flags = CF_INITTOLOGFONTSTRUCT;
+			ChooseFont(&chooseFont);
+			defaultFont->SetSizeInPixels(abs(logFont.lfHeight));
+			defaultFont->SetFamily(logFont.lfFaceName);
+			InvalidateRect(hWnd, NULL, FALSE);
+			break;
+		}
 		break;
 
 	case WM_CLOSE:

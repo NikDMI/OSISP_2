@@ -17,7 +17,7 @@ namespace LAB2 {
 		ComPtr<IDWriteTextFormat> m_textFormat; //Represent default text format
 
 		//Describes font stated, that can be changed
-		enum StateFontFlags:int64_t {fontSize = 0x1};
+		enum StateFontFlags:int64_t {fontSize = 0x1, fontFamily = 0x2};
 		int64_t m_changedFontStates = ~(int64_t)0; //Show, that state of the text layout was chanded (add new config params)
 
 		void ChangeFontState();
@@ -33,9 +33,6 @@ namespace LAB2 {
 		void SetFamily(std::wstring familyName) override;
 
 		FLOAT GetTextMaxHeight(const std::wstring& text, FLOAT maxWidth) override;
-
-		//void SetMaxTextWidth(FLOAT w) override;
-		//void SetMaxTextHeight(FLOAT h) override;
 
 		//This function is called every time, when user want to draw text layout
 		ComPtr<IDWriteTextLayout> GetFormattedTextLayout(const std::wstring text, D2D_RECT_F textRect);

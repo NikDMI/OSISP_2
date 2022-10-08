@@ -37,6 +37,8 @@ namespace LAB2 {
 			throw CreateFontException{};
 		}
 		m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_EMERGENCY_BREAK); //Breaks big words
+		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	}
 
 
@@ -52,16 +54,19 @@ namespace LAB2 {
 
 
 	void FontD2D::SetFamily(std::wstring familyName) {
-
+		m_fontFamily = familyName;
+		m_changedFontStates |= StateFontFlags::fontFamily;
 	}
 
 	void FontD2D::ChangeFontState() {
 		if (m_changedFontStates) {
 			bool isCriticalChanges = false; //This flag shows, do we need to create new textFormat object
-			if (m_changedFontStates & StateFontFlags::fontSize) {
+			if (m_changedFontStates & StateFontFlags::fontSize || m_changedFontStates & StateFontFlags::fontFamily) {
 				isCriticalChanges = true;
 			}
-			if (isCriticalChanges) CreateNewTextFormat();
+	
+			if (isCriticalChanges) 
+				CreateNewTextFormat();
 			m_changedFontStates = 0;
 		}
 	}
@@ -77,7 +82,6 @@ namespace LAB2 {
 			maxWidth, maxHeight, textLayout.GetAddressOf());
 		if (hRes != S_OK)
 			throw CreateFontException{};
-		
 		return textLayout;
 	}
 

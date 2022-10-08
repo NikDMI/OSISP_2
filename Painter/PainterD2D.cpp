@@ -45,6 +45,10 @@ namespace LAB2 {
 	}
 
 	void PainterD2D::EndDraw() {
+		if (m_isSetClipRect) {
+			m_renderTarget->PopAxisAlignedClip(); //Pop last clip rect
+			m_isSetClipRect = false;
+		}
 		m_renderTarget->EndDraw();
 		ValidateRect(m_hWnd, NULL);
 	}
@@ -62,6 +66,11 @@ namespace LAB2 {
 	void PainterD2D::Rectangle(RECT rect) {
 		D2D1_RECT_F rectF{ rect.left,rect.top, rect.right,rect.bottom };
 		m_renderTarget->FillRectangle(rectF, m_brush.Get());
+	}
+
+	void PainterD2D::Line(D2D1_POINT_2F p1, D2D1_POINT_2F p2, UINT width) {
+		m_renderTarget->DrawLine({ (FLOAT)p1.x, (FLOAT)p1.y }, { (FLOAT)p2.x, (FLOAT)p2.y },
+			m_brush.Get(), (FLOAT)width);
 	}
 
 	void PainterD2D::Resize(uint32_t width, uint32_t height) {
@@ -141,12 +150,30 @@ namespace LAB2 {
 		}
 	}
 
-	void PainterD2D::DrawTextLayout(const std::wstring& text, RECT layoutRect, INT xTextOffset, INT yTextOffset) {
+	void PainterD2D::SetClipRect(const D2D_RECT_F& clipRect) {
+		if (m_isSetClipRect) {
+			m_renderTarget->PopAxisAlignedClip(); //Pop last clip rect
+		}
+		else {
+			m_isSetClipRect = true;
+		}
+		m_renderTarget->PushAxisAlignedClip(clipRect, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	}
+
+	void PainterD2D::SetNormalClipRect() {
+		if (m_isSetClipRect) {
+			m_renderTarget->PopAxisAlignedClip();
+			m_isSetClipRect = false;
+		}
+	}
+
+	void PainterD2D::DrawTextLayout(const std::wstring& text, D2D1_RECT_F layoutRect, INT xTextOffset, INT yTextOffset) {
 		if (m_currentFont != nullptr) {
-			D2D_RECT_F layoutRectF{ layoutRect.left, layoutRect.top, layoutRect.right, layoutRect.bottom };
+			//D2D_RECT_F layoutRectF{ layoutRect.left, layoutRect.top, layoutRect.right, layoutRect.bottom };
+			
 			m_renderTarget->DrawTextLayout(
-				{ (float)layoutRect.left+xTextOffset, (float)layoutRect.top+yTextOffset },
-				m_currentFont->GetFormattedTextLayout(text, layoutRectF).Get(),
+				{ (FLOAT)xTextOffset, (FLOAT)yTextOffset },
+				m_currentFont->GetFormattedTextLayout(text, layoutRect).Get(),
 				m_textBrushDefault.Get(), D2D1_DRAW_TEXT_OPTIONS_CLIP);
 		}
 	}

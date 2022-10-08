@@ -150,7 +150,11 @@
     <ClInclude Include="Font\IFont.h" />
     <ClInclude Include="Painter\Painter.h" />
     <ClInclude Include="Painter\PainterD2D.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Table\Table.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
