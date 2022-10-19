@@ -142,6 +142,7 @@
     <ClCompile Include="Font\FontD2D.cpp" />
     <ClCompile Include="OSISP_2.cpp" />
     <ClCompile Include="Painter\PainterD2D.cpp" />
+    <ClCompile Include="TableParser\TableParser.cpp" />
     <ClCompile Include="Table\Table.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +152,7 @@
     <ClInclude Include="Painter\Painter.h" />
     <ClInclude Include="Painter\PainterD2D.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="TableParser\TableParser.h" />
     <ClInclude Include="Table\Table.h" />
   </ItemGroup>
   <ItemGroup>

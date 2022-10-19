@@ -3,6 +3,7 @@
 #include "Font/FontD2D.h"
 #include "Painter/PainterD2D.h"
 #include "Table/Table.h"
+#include "TableParser/TableParser.h"
 #include "resource.h"
 #include <commdlg.h>
 
@@ -39,25 +40,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lCmdLine, int nCmdShow)
 	SetMenu(hWnd, (HMENU)LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MAINMENU)));
 	ShowWindow(hWnd, SW_SHOW);
 	MSG msg;
-
-	std::string s = "@1_2@Some people@end@, @1_1@when confronted with a problem, @end@think "
-		"\"I know, I'll use regular expressions.\" "
-		"Now they have two problems.";
-
-	std::regex word_regex("@(\\d+)_(\\d+)@(.+?)@end@");
-	auto words_begin =
-		std::sregex_iterator(s.begin(), s.end(), word_regex);
-	auto words_end = std::sregex_iterator();
-
-	while (words_begin != words_end) {
-		auto res = *(words_begin++);
-		auto subMathces = res.begin();
-		while (subMathces != res.end()) {
-			auto subM = subMathces->str();
-			subMathces++;
-		}
-		auto str = res.str();
-	}
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
@@ -162,6 +144,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			ChooseFont(&chooseFont);
 			defaultFont->SetSizeInPixels(abs(logFont.lfHeight));
 			defaultFont->SetFamily(logFont.lfFaceName);
+			InvalidateRect(hWnd, NULL, FALSE);
+			break;
+
+		case  ID_MENU_SAVE_TABLE_DATA:
+			TableParser::WriteDataContentIntoFile(L"OutputFile.txt", table);
+			break;
+
+		case ID_MENU_LOAD_TABLE_DATA:
+			TableParser::ParseFileIntoTable(L"OutputFile.txt", table);
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 		}

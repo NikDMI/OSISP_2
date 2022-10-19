@@ -54,8 +54,8 @@ IDR_MAINMENU MENU
 BEGIN
     POPUP "Файл"
     BEGIN
-        MENUITEM "Загрузить",                   ID_40001
-        MENUITEM "Сохранить",                   ID_40002
+        MENUITEM "Загрузить",                   ID_MENU_LOAD_TABLE_DATA
+        MENUITEM "Сохранить",                   ID_MENU_SAVE_TABLE_DATA
     END
     POPUP "Шрифт"
     BEGIN

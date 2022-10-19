@@ -21,11 +21,15 @@ namespace LAB2 {
 		COLOR m_tableColor;
 		COLOR m_lineColor;
 
+		friend class TableParser;
+
 	public:
 		Table(Painter* painter, COLOR tableColor, COLOR lineColor = {0.0f, 0.0f, 0.0f, 1.0f});
 
 		//Set text to specific ceil
 		void SetText(unsigned int row, unsigned int column, const std::wstring& text);
+
+		void ClearTable();
 
 		//ShowTable
 		//x/yOffset - offset of the table from (0;0) point - like a push

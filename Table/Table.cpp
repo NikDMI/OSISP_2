@@ -19,6 +19,16 @@ namespace LAB2 {
 		}
 	}
 
+	void Table::ClearTable() {
+		for (int i = 0; i < m_rowCount; ++i) {
+			for (int j = 0; j < m_colCount; ++j) {
+				m_table[i][j] = L"";
+			}
+		}
+		m_colCount = 0;
+		m_rowCount = 0;
+	}
+
 	FLOAT Table::ShowHorizontalLinearTable(D2D_RECT_F tableRectF, FLOAT xOffsetInPixels, FLOAT yOffsetInPixels) {
 		FLOAT tableWidth = tableRectF.right - tableRectF.left;
 		FLOAT tableHeight = tableRectF.bottom - tableRectF.top;
