@@ -22,6 +22,7 @@ namespace LAB2 {
 		bool m_isSetClipRect = false;
 	public:
 		PainterD2D(HWND hWnd);
+		PainterD2D(HWND hWnd, COLOR windowColor);
 		//System methods
 		void StartDraw() override;
 		void EndDraw() override;
@@ -37,6 +38,7 @@ namespace LAB2 {
 
 		//Draw methods
 		void Rectangle(RECT rect) override;
+		void Rectangle(D2D_RECT_F rect) override;
 		void Line(D2D1_POINT_2F p1, D2D1_POINT_2F p2, UINT width) override;
 		void DrawImage(BITMAP_HANDLE bmpIndex, RECT distRect) override;
 		void DrawTextLayout(const std::wstring& text, D2D1_RECT_F layoutRect, INT xTextOffset = 0, INT yTextOffset = 0) override;

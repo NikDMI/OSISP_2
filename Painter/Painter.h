@@ -35,6 +35,7 @@ namespace LAB2 {
 		virtual IFont* GetCurrentFontObject() = 0;
 
 		virtual void Rectangle(RECT rect) = 0;
+		virtual void Rectangle(D2D_RECT_F rect) = 0;
 		virtual void Line(D2D1_POINT_2F p1, D2D1_POINT_2F p2, UINT width) = 0;
 		virtual void DrawImage(BITMAP_HANDLE bmpIndex, RECT distRect) = 0;
 		virtual void DrawTextLayout(const std::wstring& text, D2D1_RECT_F layoutRect, INT xTextOffset = 0, INT yTextOffset = 0) = 0;

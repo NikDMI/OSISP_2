@@ -11,8 +11,7 @@ namespace LAB2 {
 	std::map<BITMAP_HANDLE, ComPtr<ID2D1Bitmap>> PainterD2D::loadedImages;
 	BITMAP_HANDLE PainterD2D::max_free_handle;
 
-
-	PainterD2D::PainterD2D(HWND hWnd) : m_hWnd{ hWnd } {
+	PainterD2D::PainterD2D(HWND hWnd, COLOR windowColor) :m_hWnd{ hWnd }, m_windowColor{windowColor} {
 		if (!isComInit) {
 			if (CoInitialize(NULL) != S_OK)
 				throw Exception(L"Can't init COM library");
@@ -31,15 +30,15 @@ namespace LAB2 {
 			m_renderTarget.GetAddressOf()) != S_OK)
 			throw Exception(L"CreateHWNDRender target failed");
 		m_renderTarget->SetDpi(96.0f, 96.0f);
-		m_windowColor = { 0.7f, 0.7f, 0.7f, 1.0f };
 		SetDefaultTextColor({ 0.0,0.0,0.0,1.0 });
 	}
+
+	PainterD2D::PainterD2D(HWND hWnd) : PainterD2D{hWnd, { 0.7f, 0.7f, 0.7f, 1.0f } } {}
 
 	void PainterD2D::StartDraw() {
 		m_renderTarget->BeginDraw();
 		if (!m_brush.Get()) {
-			D2D1_COLOR_F color{ 0.0f, 0.0f, 0.0f, 1.0f };
-			m_renderTarget->CreateSolidColorBrush(color, m_brush.GetAddressOf());
+			m_renderTarget->CreateSolidColorBrush(m_windowColor, m_brush.GetAddressOf());
 		}
 		m_renderTarget->Clear(m_windowColor);
 	}
@@ -65,7 +64,11 @@ namespace LAB2 {
 
 	void PainterD2D::Rectangle(RECT rect) {
 		D2D1_RECT_F rectF{ rect.left,rect.top, rect.right,rect.bottom };
-		m_renderTarget->FillRectangle(rectF, m_brush.Get());
+		this->Rectangle(rectF);
+	}
+
+	void PainterD2D::Rectangle(D2D_RECT_F rect) {
+		m_renderTarget->FillRectangle(rect, m_brush.Get());
 	}
 
 	void PainterD2D::Line(D2D1_POINT_2F p1, D2D1_POINT_2F p2, UINT width) {
