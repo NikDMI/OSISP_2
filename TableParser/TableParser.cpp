@@ -25,7 +25,7 @@ namespace LAB2 {
 			dataLength = WideCharToMultiByte(CP_UTF8, 0, tableContent.c_str(), tableContent.size(), data, dataLength, NULL, NULL);
 			if (dataLength == 0) {
 				throw Exception(L"Can't create table data");
-				delete data;
+				delete[] data;
 				oFile.close();
 			}
 			oFile.write(data, dataLength);

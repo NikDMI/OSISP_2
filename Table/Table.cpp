@@ -29,10 +29,25 @@ namespace LAB2 {
 		m_rowCount = 0;
 	}
 
+	FLOAT Table::GetCountedTableWidth(D2D_RECT_F tableRectF) {
+		if (m_colCount == 0) return 0;
+		FLOAT tableWidth = tableRectF.right - tableRectF.left;
+		FLOAT columnPixelWidth = (FLOAT)(tableWidth - VLINE_PIXEL_WIDTH * (m_colCount + 1)) / m_colCount;//Width of text area
+		if (columnPixelWidth < MIN_CEILL_WIDTH) {
+			return MIN_CEILL_WIDTH * m_colCount + (m_colCount+1) * VLINE_PIXEL_WIDTH;
+		}
+		return tableWidth;
+	}
+
 	FLOAT Table::ShowHorizontalLinearTable(D2D_RECT_F tableRectF, FLOAT xOffsetInPixels, FLOAT yOffsetInPixels) {
+		if (m_colCount == 0) return 0;
 		FLOAT tableWidth = tableRectF.right - tableRectF.left;
 		FLOAT tableHeight = tableRectF.bottom - tableRectF.top;
 		FLOAT columnPixelWidth = (FLOAT)(tableWidth - VLINE_PIXEL_WIDTH * (m_colCount + 1)) / m_colCount;//Width of text area
+		if (columnPixelWidth < MIN_CEILL_WIDTH) { 
+			columnPixelWidth = MIN_CEILL_WIDTH;
+			tableWidth = MIN_CEILL_WIDTH * m_colCount + (m_colCount + 1) * VLINE_PIXEL_WIDTH;
+		}
 
 		FLOAT startYOffset = yOffsetInPixels;
 		IFont* currentPainterFont = m_painter->GetCurrentFontObject();

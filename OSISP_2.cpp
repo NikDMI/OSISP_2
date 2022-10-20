@@ -56,7 +56,13 @@ struct TableConfig {
 	D2D_RECT_F m_tableRect;
 	const FLOAT epsilon = 0.000001;
 
-	TableConfig(Table* table, const D2D_RECT_F& tableRect) :m_table{ table }, m_tableRect{tableRect} {}
+	FLOAT m_countedTableWidth;
+	FLOAT m_tableWidth;
+
+	TableConfig(Table* table, const D2D_RECT_F& tableRect) :m_table{ table }, m_tableRect{tableRect} {
+		m_tableWidth = tableRect.right - tableRect.left;
+		m_countedTableWidth = table->GetCountedTableWidth(tableRect);
+	}
 
 
 	void DrawTable() {
@@ -71,11 +77,32 @@ struct TableConfig {
 
 	void SetRect(const RECT& tableRect) {
 		m_tableRect = { 0,0,(FLOAT)tableRect.right, (FLOAT)tableRect.bottom };
+		m_tableWidth = tableRect.right - tableRect.left;
+		CorrectTableOffsetX();
 	}
 
 	void ScrollTableByY(FLOAT dy) {
 		m_tableOffsetY += dy;
 		if (m_tableOffsetY < epsilon) m_tableOffsetY = 0.0f;
+	}
+
+	void ScrollTableByX(FLOAT dx) {
+		m_tableOffsetX += dx;
+		CorrectTableOffsetX();
+	}
+
+	void CorrectTableOffsetX() {
+		//Correct table offset
+		m_countedTableWidth = m_table->GetCountedTableWidth(m_tableRect);
+		if (m_countedTableWidth < epsilon) return;
+		if (m_tableOffsetX < epsilon) {
+			if (-m_tableOffsetX + m_tableWidth > m_countedTableWidth) {
+				m_tableOffsetX = -(m_countedTableWidth - m_tableWidth);
+			}
+		}
+		else {
+			m_tableOffsetX = 0.0f;
+		}
 	}
 };
 
@@ -102,12 +129,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		table = new Table{ painter, windowColor };
 		GetClientRect(hWnd, &clientRect);
 		tableConfig = new TableConfig(table, D2D1_RECT_F{ 0, 0, (FLOAT)clientRect.right, (FLOAT)clientRect.bottom });
-		table->SetText(0, 0, L"Hello");
-		table->SetText(0, 1, L"Hello2");
-		table->SetText(1, 1, L"HI2");
-		table->SetText(2, 2, L"HI2HH");
-		table->SetText(3, 2, L"No no no no no no");
-		table->SetText(3, 10, L"Nikita hello, how are you&");
 		break;
 
 	case WM_SIZE:
@@ -133,6 +154,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		InvalidateRect(hWnd, NULL, FALSE);
 		break;
 
+	case WM_MOUSEHWHEEL:
+		wheelCount = ((double)GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA) * WHEEL_SENSETIVE;
+		tableConfig->ScrollTableByX(-wheelCount);
+		InvalidateRect(hWnd, NULL, FALSE);
+		break;
+
 	case WM_COMMAND://Menu events
 		switch (LOWORD(wParam)) {//Switch by ID
 
@@ -153,6 +180,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 		case ID_MENU_LOAD_TABLE_DATA:
 			TableParser::ParseFileIntoTable(L"OutputFile.txt", table);
+			tableConfig->CorrectTableOffsetX();
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
 		}
